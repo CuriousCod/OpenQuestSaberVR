@@ -1,4 +1,5 @@
-﻿using Boomlagoon.JSON;
+﻿using System;
+using Boomlagoon.JSON;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -8,6 +9,7 @@ using System.Text;
 using System.Linq;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
+using _Scripts;
 
 public class SongData : MonoBehaviour
 {
@@ -37,17 +39,22 @@ public class SongData : MonoBehaviour
                     var text = await reader.ReadToEndAsync();
 
                     JSONObject infoFile = JSONObject.Parse(text);
-                    var song = new Song(
-                        dir,
-                        infoFile.GetString("_songName"),
-                        infoFile.GetString("_songAuthorName"),
-                        infoFile.GetString("_levelAuthorName"),
-                        infoFile.GetNumber("_beatsPerMinute").ToString(),
-                        Path.Combine(dir, infoFile.GetString("_coverImageFilename")),
-                        Path.Combine(dir, infoFile.GetString("_songFilename")),
-                        ParsePlayingMethods(infoFile.GetArray("_difficultyBeatmapSets")));
-
-                    return song;
+                    try{
+                        var song = new Song(
+                            dir,
+                            infoFile.GetString("_songName"),
+                            infoFile.GetString("_songAuthorName"),
+                            infoFile.GetString("_levelAuthorName"),
+                            infoFile.GetNumber("_beatsPerMinute").ToString(),
+                            Path.Combine(dir, infoFile.GetString("_coverImageFilename")),
+                            Path.Combine(dir, infoFile.GetString("_songFilename")),
+                            ParsePlayingMethods(infoFile.GetArray("_difficultyBeatmapSets")));
+                        return song;
+                    }
+                    catch(NullReferenceException e) {
+                        Debug.LogError(e);
+                        return null;
+                    }
                 }
             } else
                 return null;
@@ -86,6 +93,10 @@ public class SongData : MonoBehaviour
     }
 
     void Awake() {
+    # if !UNITY_ANDROID
+        Config config = new Config();
+    # endif
+
         this.songPaths = new string[]
             {
     #if UNITY_ANDROID
@@ -93,7 +104,7 @@ public class SongData : MonoBehaviour
                 "/sdcard/Playlists",
                 "/sdcard/Download"
     #else
-                Path.Combine(Application.dataPath + "/Playlists")
+                Path.Combine(config.Data.SongFolder)
     #endif
             };
         Songs = LoadSongs();

@@ -64,11 +64,11 @@ public class Saber : MonoBehaviour
         {
             float hapticStrength = 0.1f;
 
-            if (VRTK_ControllerReference.IsValid(controllerReference))
-            {
-                collisionForce = VRTK_DeviceFinder.GetControllerVelocity(controllerReference).magnitude * impactMagnifier;
-                hapticStrength = collisionForce / maxCollisionForce;
-            }
+            // if (VRTK_ControllerReference.IsValid(controllerReference))
+            // {
+            //     collisionForce = VRTK_DeviceFinder.GetControllerVelocity(controllerReference).magnitude * impactMagnifier;
+            //     hapticStrength = collisionForce / maxCollisionForce;
+            // }
 
             if (hapticStrength > 0.05f && !string.IsNullOrWhiteSpace(hit.transform.tag))
             {
@@ -84,10 +84,10 @@ public class Saber : MonoBehaviour
                 }
                 else if (hit.transform.CompareTag("Cube"))
                 {
-                    if (Vector3.Angle(transform.position - previousPos, hit.transform.up) > 130)
-                    {
+                    // if (Vector3.Angle(transform.position - previousPos, hit.transform.up) > 130)
+                    // {
                         SliceCube(hit.transform);
-                    }
+                    // }
                 }
             }
         }

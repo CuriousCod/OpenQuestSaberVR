@@ -56,34 +56,34 @@ public class SwitchAndMoveCamera : MonoBehaviour
             MovementActivated = !MovementActivated;
         }
 
-        if (OverviewCamera.enabled && MovementActivated)
+        if (!OverviewCamera.enabled || !MovementActivated) 
+            return;
+        
+        lastMouse = Input.mousePosition - lastMouse;
+        lastMouse = new Vector3(-lastMouse.y * camSens, lastMouse.x * camSens, 0);
+        lastMouse = new Vector3(transform.eulerAngles.x + lastMouse.x, transform.eulerAngles.y + lastMouse.y, 0);
+        transform.eulerAngles = lastMouse;
+        lastMouse = Input.mousePosition;
+        // Mouse camera angle done.  
+
+        // Keyboard commands
+        Vector3 p = GetBaseInput();
+        if (Input.GetKey(KeyCode.LeftShift))
         {
-            lastMouse = Input.mousePosition - lastMouse;
-            lastMouse = new Vector3(-lastMouse.y * camSens, lastMouse.x * camSens, 0);
-            lastMouse = new Vector3(transform.eulerAngles.x + lastMouse.x, transform.eulerAngles.y + lastMouse.y, 0);
-            transform.eulerAngles = lastMouse;
-            lastMouse = Input.mousePosition;
-            // Mouse camera angle done.  
+            totalRun += Time.deltaTime;
+            p *= totalRun * shiftAdd;
+            p.x = Mathf.Clamp(p.x, -maxShift, maxShift);
+            p.y = Mathf.Clamp(p.y, -maxShift, maxShift);
+            p.z = Mathf.Clamp(p.z, -maxShift, maxShift);
+        }
+        else
+        {
+            totalRun = Mathf.Clamp(totalRun * 0.5f, 1f, 1000f);
+            p *= mainSpeed;
+        }
 
-            // Keyboard commands
-            Vector3 p = GetBaseInput();
-            if (Input.GetKey(KeyCode.LeftShift))
-            {
-                totalRun += Time.deltaTime;
-                p *= totalRun * shiftAdd;
-                p.x = Mathf.Clamp(p.x, -maxShift, maxShift);
-                p.y = Mathf.Clamp(p.y, -maxShift, maxShift);
-                p.z = Mathf.Clamp(p.z, -maxShift, maxShift);
-            }
-            else
-            {
-                totalRun = Mathf.Clamp(totalRun * 0.5f, 1f, 1000f);
-                p *= mainSpeed;
-            }
-
-            p *= Time.deltaTime;
-            transform.Translate(p);
-        } 
+        p *= Time.deltaTime;
+        transform.Translate(p);
     }
 
     private Vector3 GetBaseInput()

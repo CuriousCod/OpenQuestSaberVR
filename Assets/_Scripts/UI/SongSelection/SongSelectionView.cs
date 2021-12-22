@@ -124,6 +124,7 @@ namespace UI.SongSelection
 
             foreach (var difficulty in difficulties) {
                 var obj = Instantiate(PlayButtonPrefab, PlayButtons.transform);
+                obj.layer = 5;
                 obj.transform.localPosition = new Vector3(xOffset, 0, 0);
                 var btn = obj.GetComponent<PlayButton>();
                 btn.SetText(difficulty);
@@ -247,14 +248,16 @@ namespace UI.SongSelection
             disposables.Add(merged.Connect());
         }
 
-        void FixedUpdate() {
-            if (previewAudioClip != null && startSongPreview) {
-                startSongPreview = false;
-                audioSource.Stop();
-                audioSource.clip = previewAudioClip;
-                audioSource.time = 40f;
-                audioSource.Play();
-            }
+        void FixedUpdate()
+        {
+            if (previewAudioClip == null || !startSongPreview) 
+                return;
+            
+            startSongPreview = false;
+            audioSource.Stop();
+            audioSource.clip = previewAudioClip;
+            audioSource.time = 40f;
+            audioSource.Play();
         }
 
         private void OnDestroy() {

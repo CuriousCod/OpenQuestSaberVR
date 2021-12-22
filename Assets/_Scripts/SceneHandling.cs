@@ -136,4 +136,6 @@ public class SceneHandling : MonoBehaviour
 
         return true;
     }
+
+    public bool IsPancake => PancakeMode;
 }

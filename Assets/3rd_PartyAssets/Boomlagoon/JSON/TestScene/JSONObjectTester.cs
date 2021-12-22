@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class JSONObjectTester : MonoBehaviour {
 
-	public GUIText infoText;
+	public UnityEngine.UI.Text infoText;
 
 	private string stringToEvaluate = @"{""web-app"": {
   ""servlet"": [   
