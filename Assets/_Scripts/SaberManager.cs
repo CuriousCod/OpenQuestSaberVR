@@ -133,7 +133,7 @@ public class SaberManager : MonoBehaviour
     // Only use is by SceneHandling to enable/disable the sabers, so may move to here.
     public GameObject GetSaberObject(bool isRight) {
         var holder = isRight ? rightSaberHolder : leftSaberHolder;
-        return holder.transform.Find(SABER_NAME).gameObject;
+        return holder.transform.Find(SABER_NAME)?.gameObject;
     }
 
     IEnumerator LoadDefaultSabers() {

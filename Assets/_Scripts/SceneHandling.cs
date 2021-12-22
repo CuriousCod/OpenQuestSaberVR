@@ -18,7 +18,8 @@ public class SceneHandling : MonoBehaviour
     VRTK_Pointer RightUIPointer;
 
     bool VRTK_Loaded = false;
-
+    public bool PancakeMode = false;
+    
     public GameObject debugProfiler;
 
     private void Awake()
@@ -31,6 +32,13 @@ public class SceneHandling : MonoBehaviour
 
     private void VRSetupLoaded(VRTK_SDKManager sender, VRTK_SDKManager.LoadedSetupChangeEventArgs e)
     {
+        if (e.currentSetup == null){
+            Debug.LogError("VRTK_SDKManager failed to load the current SDK Setup");
+            PancakeMode = true;
+            SabersLoaded();
+            return;
+        }
+        
         LeftController = e.currentSetup.actualLeftController;
         RightController = e.currentSetup.actualRightController;
 
@@ -59,6 +67,9 @@ public class SceneHandling : MonoBehaviour
 
     private void SaberSceneLoaded()
     {
+        if (PancakeMode)
+            return;
+        
         var saberCollisionVibrationLevel = PlayerPrefs.GetInt(PrefConstants.SaberCollisionVibrationLevel, 2);
 
         var leftSaber = saberManager.GetSaberObject(false);

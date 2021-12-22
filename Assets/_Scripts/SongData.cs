@@ -73,8 +73,8 @@ public class SongData : MonoBehaviour
                     .Where(Directory.Exists)
                     .SelectMany(Directory.GetDirectories)
                     .Select(loadSong);
-            var songs = await Task.WhenAll(songTasks);
-            return songs.Where(x => x != null).OrderBy(song => song.Name);
+            var songs2 = await Task.WhenAll(songTasks);
+            return songs2.Where(x => x != null).OrderBy(song => song.Name);
         }
 
         var songs = await loadSongs(this.songPaths);
@@ -96,7 +96,6 @@ public class SongData : MonoBehaviour
                 Path.Combine(Application.dataPath + "/Playlists")
     #endif
             };
-
         Songs = LoadSongs();
     }
 }

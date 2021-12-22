@@ -30,8 +30,8 @@ public class MainMenu : MonoBehaviour
 
     private void Awake()
     {
-        audioHandling = GameObject.FindGameObjectWithTag("AudioHandling").GetComponent<AudioHandling>();
-        sceneHandling = GameObject.FindGameObjectWithTag("SceneHandling").GetComponent<SceneHandling>();
+        audioHandling = GameObject.FindGameObjectWithTag("AudioHandling")?.GetComponent<AudioHandling>();
+        sceneHandling = GameObject.FindGameObjectWithTag("SceneHandling")?.GetComponent<SceneHandling>();
 
         GraphicsSettings.PostProcessingChanged.AddListener(UpdatePostProcessingText);
     }

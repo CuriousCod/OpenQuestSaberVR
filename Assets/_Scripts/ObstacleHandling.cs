@@ -64,11 +64,11 @@ public class ObstacleHandling : MonoBehaviour
              ((int)_obstacle.Type >= 4001 && (int)_obstacle.Type <= 4005000)))
         {
             Mode mode = ((int)_obstacle.Type >= 4001 && (int)_obstacle.Type <= 4100000)
-                ? Mode.preciseHeightStart
-                : Mode.preciseHeight;
+                ? Mode.PreciseHeightStart
+                : Mode.PreciseHeight;
             int height = 0;
             int startHeight = 0;
-            if (mode == Mode.preciseHeightStart)
+            if (mode == Mode.PreciseHeightStart)
             {
                 int value = (int)_obstacle.Type;
                 value -= 4001;
@@ -82,7 +82,7 @@ public class ObstacleHandling : MonoBehaviour
             }
 
             float num = 0;
-            if ((_obstacle.Width >= 1000) || (mode == Mode.preciseHeightStart))
+            if ((_obstacle.Width >= 1000) || (mode == Mode.PreciseHeightStart))
             {
 
                 float width = (float)_obstacle.Width - 1000;

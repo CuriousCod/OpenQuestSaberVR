@@ -11,11 +11,11 @@ public class MissedCubeHandling : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.layer == 8 || other.gameObject.layer == 9)
-        {
-            Destroy(other.gameObject);
-            scoreHandling.DecreaseScore(50);
-            scoreHandling.ResetComboFactor();
-        }
+        if (other.gameObject.layer != 8 && other.gameObject.layer != 9) 
+            return;
+        
+        Destroy(other.gameObject);
+        scoreHandling.DecreaseScore(50);
+        scoreHandling.ResetComboFactor();
     }
 }

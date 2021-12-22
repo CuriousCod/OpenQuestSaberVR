@@ -62,7 +62,7 @@ public class NotesSpawner : MonoBehaviour
         }
     }
 
-    void Start() {
+    private void Start() {
         cameraHead = GameObject.FindGameObjectWithTag("MainCamera");
         sceneHandling = GameObject.FindGameObjectWithTag("SceneHandling").GetComponent<SceneHandling>();
         audioSource = GetComponent<AudioSource>();
@@ -165,8 +165,8 @@ public class NotesSpawner : MonoBehaviour
         Comparison<Note> NoteCompare = (x, y) => x.Time.CompareTo(y.Time);
         NotesToSpawn.Sort(NoteCompare);
 
-        Comparison<Obstacle> ObsticaleCompare = (x, y) => x.Time.CompareTo(y.Time);
-        ObstaclesToSpawn.Sort(ObsticaleCompare);
+        Comparison<Obstacle> ObstacleCompare = (x, y) => x.Time.CompareTo(y.Time);
+        ObstaclesToSpawn.Sort(ObstacleCompare);
 
         BeatsPerMinute = bpm;
         
@@ -175,7 +175,7 @@ public class NotesSpawner : MonoBehaviour
         songPlaying = true;
     }
 
-    public void UpdateBeats()
+    private void UpdateBeats()
     {
         _BeatPerMin = (float)BeatsPerMinute;
         _BeatPerSec = 60 / _BeatPerMin;
@@ -184,35 +184,37 @@ public class NotesSpawner : MonoBehaviour
         UpdateSpawnTime();
     }
 
-    public void UpdateSpawnTime()
+    private void UpdateSpawnTime()
     {
         _spawnOffset = BeatsConstants.BEAT_WARMUP_SPEED / _BeatPerMin + BeatsConstants.BEAT_WARMUP_OFFSET * 0.5f / _noteSpeed;
     }
 
-    public void UpdateNotes()
+    private void UpdateNotes()
     {
-        if (audioSource.isPlaying) {
-            for (int i = _noteIndex; i < NotesToSpawn.Count; i++) {
-                if ((NotesToSpawn[i].Time * _BeatPerSec) - _spawnOffset < BeatsTime) {
-                    SetupNoteData(NotesToSpawn[i]);
+        if (!audioSource.isPlaying) 
+            return;
+        
+        for (int i = _noteIndex; i < NotesToSpawn.Count; i++) {
+            if ((NotesToSpawn[i].Time * _BeatPerSec) - _spawnOffset < BeatsTime) {
+                SetupNoteData(NotesToSpawn[i]);
 
-                    _noteIndex++;
-                } else
-                    break;
-            }
+                _noteIndex++;
+            } else
+                break;
         }
     }
 
-    public void UpdateObstilcles()
+    private void UpdateObstacles()
     {
-        if (audioSource.isPlaying) {
-            for (int i = _obstacleIndex; i < ObstaclesToSpawn.Count; i++) {
-                if ((ObstaclesToSpawn[_obstacleIndex].Time * _BeatPerSec) - _spawnOffset < BeatsTime) {
-                    SetupObstacleData(ObstaclesToSpawn[_obstacleIndex]);
-                    _obstacleIndex++;
-                } else
-                    break;
-            }
+        if (!audioSource.isPlaying) 
+            return;
+        
+        for (int i = _obstacleIndex; i < ObstaclesToSpawn.Count; i++) {
+            if ((ObstaclesToSpawn[_obstacleIndex].Time * _BeatPerSec) - _spawnOffset < BeatsTime) {
+                SetupObstacleData(ObstaclesToSpawn[_obstacleIndex]);
+                _obstacleIndex++;
+            } else
+                break;
         }
     }
 
@@ -244,23 +246,26 @@ public class NotesSpawner : MonoBehaviour
 
     void Update()
     {
-        if (songPlaying) {
-            if (audioLoaded) {
-                audioLoaded = false;
-                audioSource.Play();
-            }
-
-            BeatsTime = audioSource.time;
-            UpdateNotes();
-            UpdateObstilcles();
-
-            if (_noteIndex > 0 && !audioSource.isPlaying && !paused) {
-                if (!menuLoadInProgress) {
-                    menuLoadInProgress = true;
-                    StartCoroutine(LoadMenu());
-                }
-            }
+        if (!songPlaying) 
+            return;
+        
+        if (audioLoaded) {
+            audioLoaded = false;
+            audioSource.Play();
         }
+
+        BeatsTime = audioSource.time;
+        UpdateNotes();
+        UpdateObstacles();
+
+        if (_noteIndex <= 0 || audioSource.isPlaying || paused) 
+            return;
+
+        if (menuLoadInProgress) 
+            return;
+        
+        menuLoadInProgress = true;
+        StartCoroutine(LoadMenu());
     }
 
     IEnumerator LoadMenu()
@@ -271,7 +276,7 @@ public class NotesSpawner : MonoBehaviour
         yield return sceneHandling.UnloadScene(SceneConstants.GAME);
     }
 
-    void GenerateNote(Note note, Vector3 moveStartPos, Vector3 moveEndPos, Vector3 jumpEndPos)
+    private void GenerateNote(Note note, Vector3 moveStartPos, Vector3 moveEndPos, Vector3 jumpEndPos)
     {
         if (note.CutDirection == CutDirection.NONDIRECTION)
         {
@@ -284,7 +289,7 @@ public class NotesSpawner : MonoBehaviour
         handling.SetupNote(moveStartPos, moveEndPos, jumpEndPos, this, note);
     }
 
-    public void GenerateObstacle(Obstacle obstacle, Vector3 moveStartPos, Vector3 moveEndPos, Vector3 jumpEndPos)
+    private void GenerateObstacle(Obstacle obstacle, Vector3 moveStartPos, Vector3 moveEndPos, Vector3 jumpEndPos)
     {
         GameObject wall = Instantiate(Wall, transform);
         var wallHandling = wall.GetComponent<ObstacleHandling>();
@@ -322,7 +327,8 @@ public class NotesSpawner : MonoBehaviour
 
         return 1.9f;
     }
-    public float GetX(float noteindex)
+
+    private float GetX(float noteindex)
     {
         float num = -1.5f;
 
@@ -392,6 +398,7 @@ public class NotesSpawner : MonoBehaviour
         internal double TimeInSeconds;
         internal double Time;
         internal int LineIndex;
+        internal int LineLayer;
         internal double Duration;
         internal ObstacleType Type;
         internal double Width;
@@ -405,8 +412,8 @@ public class NotesSpawner : MonoBehaviour
 
     public enum Mode
     {
-        preciseHeight,
-        preciseHeightStart
+        PreciseHeight,
+        PreciseHeightStart
     };
 
     public static GameObject GetChildByName(GameObject parent, string childName)
